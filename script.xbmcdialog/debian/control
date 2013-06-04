@@ -1,0 +1,12 @@
+Source: xbmcdialog
+Maintainer: Matthias Fenner <informix@web.de>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 8)
+
+Package: xbmcdialog
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: dialog replacement
+ using xbmc interface as dialogs.

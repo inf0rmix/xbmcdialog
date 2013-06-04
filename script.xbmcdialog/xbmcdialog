@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from os import getenv , system , getpid , path , remove
+from sys import argv , exit
+from signal import SIGINT , SIGUSR1 , signal , pause
+from base64 import b64encode
+
+try:
+  import xbmcdialogenv
+  XDLG_MODE = 0
+except:
+  XDLG_MODE = 1
+
+XDLG_MODE = 1
+
+if XDLG_MODE == 0:
+  XBMC_DIR = xbmcdialogenv.XBMC_USERDIR
+  XDLG_DIR = xbmcdialogenv.XDLG_DIR
+else:
+  XBMC_DIR = getenv('HOME')+ '/.xbmc'
+  XDLG_DIR = XBMC_DIR+'/addons/script.xbmcdialog'
+
+#Result-File
+XDLG_RESFILE = XBMC_DIR + '/temp/xbmcdialog.out'
+
+##
+## Base functions
+##
+
+def file_write(myfile,mytxt):
+  f = open(myfile, 'w')
+  f.write(mytxt)
+  f.close()
+
+def file_read(myfile):
+  if path.exists(myfile):
+    f = open(myfile, 'r')
+    data = f.read()
+    f.close()
+    return data
+  else:
+    return ''
+
+def signal_handler_usr(signal, frame):
+  myrdata = file_read(XDLG_RESFILE)
+  if myrdata != '':
+    print myrdata
+  system("rm -f '"+XDLG_RESFILE+"'")
+  exit(0)
+
+def signal_handler_int(signal, frame):
+  xbmc_handler('PreviousMenu')
+  system("rm -f '"+XDLG_RESFILE+"'")
+  exit(0)
+
+##
+## XBMC-Handler from xbmc-send
+##
+
+from socket import socket,AF_INET,SOCK_DGRAM
+try:
+    from xbmc.xbmcclient import *
+except:
+    sys.path.append('../../lib/python')
+    from xbmcclient import *
+
+def xbmc_handler(myaction):
+  
+    addr = ('127.0.0.1', 9777)
+    sock = socket(AF_INET,SOCK_DGRAM)
+    
+    packet = PacketACTION(actionmessage=myaction, actiontype=ACTION_BUTTON)
+    packet.send(sock, addr)
+    sock.close()
+
+##
+## ARGV-Parser
+##
+  
+def format_xbmccmd(myargv):
+  myargstr = str(getpid())+':'+encode_argv_b64(myargv)
+  myuri = 'RunScript('+XDLG_DIR+'/xbmcdialog.py,'+myargstr+')'
+  return myuri
+
+def encode_argv_b64(myargv):
+  mystr , myarglen = '' , len(myargv)
+  for mypos in range(1,myarglen):
+    mystr += myargv[mypos] + '\00'
+  if mystr.endswith('\00'):
+    mystr = mystr[:-1].encode('utf-8')
+  return b64encode(mystr)
+
+def Init():
+  myuri=format_xbmccmd(argv)
+  xbmc_handler(myuri)
+
+##
+## Main
+##
+
+signal(SIGINT, signal_handler_int)
+signal(SIGUSR1, signal_handler_usr)
+
+Init()
+
+pause()
