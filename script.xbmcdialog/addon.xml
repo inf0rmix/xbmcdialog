@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="script.xbmcdialog"
+       name="xbmcdialog"
+       version="0.91"
+       provider-name="Matthias Fenner (informix@web.de)">
+  <requires>
+    <import addon="xbmc.python" 
+            version="2.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <language></language>
+    <summary lang="en">Drop-In replacement for linux x/cdialog command.</summary>
+    <description lang="en">Enables easy scripting using xbmc-dialogs.</description>
+    <license>GPL</license>
+    <platform>all</platform>
+  </extension>
+</addon>

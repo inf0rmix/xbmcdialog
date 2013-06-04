@@ -1,0 +1,11 @@
+After installation, copy the main-script into your path:
+
+sudo cp $HOME/.xbmc/addons/script.xbmcdialog/xbmcdialog /usr/local/bin/xbmcdialog
+sudo chmod +x  /usr/local/bin/xbmcdialog
+
+The system-wide packages uses a library for the basic-configuration.
+For global install copy it into your python-librara-path:
+
+cp $HOME/.xbmc/addons/script.xbmcdialog/xbmcdialogenv.py /usr/lib/python2.7
+
+The global setup is disabled in the source, but this will change till final release.
